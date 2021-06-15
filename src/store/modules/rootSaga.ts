@@ -1,4 +1,4 @@
-import { all, AllEffect } from 'redux-saga/effects';
+import { all } from 'redux-saga/effects';
 
 import cart from './cart/sagas';
 

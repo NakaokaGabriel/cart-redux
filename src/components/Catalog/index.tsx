@@ -1,13 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import api from '../../services/api';
-import { addProductToCart } from '../../store/modules/cart/actions';
+import { IState } from '../../store';
+import { addProductToCartRequest } from '../../store/modules/cart/actions';
 import { IProduct } from '../../store/modules/cart/types';
 
 const Catalog: React.FC = () => {
   const [catalog, setCatalog] = useState<IProduct[]>([]);
   const dispatch = useDispatch();
+
+  const stockCheck = useSelector<IState, number[]>(state => state.cart.failedStockCheck);
 
   useEffect(() => {
     function getProducts() {
@@ -20,8 +23,12 @@ const Catalog: React.FC = () => {
   }, []);
 
   const handleAddProductToCart = useCallback((product: IProduct) => {
-    dispatch(addProductToCart(product))
+    dispatch(addProductToCartRequest(product))
   }, [dispatch]);
+
+  function validateStock(product: number): boolean {
+    return stockCheck.includes(product);
+  }
 
   return (
     <>
@@ -38,6 +45,8 @@ const Catalog: React.FC = () => {
           >
             Comprar
           </button>
+
+          { validateStock(catalogItem.id) && <span style={{ color: 'red' }}>Falta de estoque</span> }
         </article>
       ))}
     </>
